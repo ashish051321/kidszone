@@ -169,6 +169,7 @@
             justify-content: center;
             visibility: hidden;
             z-index: 1000;
+            backdrop-filter: blur(5px);
         }
 
         #result {
@@ -178,11 +179,22 @@
             text-align: center;
             border: 2px solid #00ffcc;
             box-shadow: 0 0 30px #00ffcc;
+            min-width: 300px;
+            max-width: 90%;
         }
 
         #result h1 {
             color: #ffcc00;
             margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 0 0 15px #ffcc00;
+        }
+
+        #result p {
+            color: #fff;
+            font-size: 1.5em;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #fff;
         }
 
         #result button {
@@ -195,11 +207,29 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 20px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         #result button:hover {
             transform: scale(1.1);
             box-shadow: 0 0 20px #00ffcc;
+        }
+
+        @media (max-width: 600px) {
+            #result {
+                padding: 30px 20px;
+                min-width: 250px;
+            }
+
+            #result h1 {
+                font-size: 2em;
+            }
+
+            #result p {
+                font-size: 1.2em;
+            }
         }
 
         #youtube,
@@ -323,26 +353,26 @@
         const tileSize = 42;
 
         function Camera() {
-            const size = 300;
-            const viewRatio = window.innerWidth / window.innerHeight;
-            const width = viewRatio < 1 ? size : size * viewRatio;
-            const height = viewRatio < 1 ? size / viewRatio : size;
+    const size = 450; // Increased from 300 to zoom out
+    const viewRatio = window.innerWidth / window.innerHeight;
+    const width = viewRatio < 1 ? size : size * viewRatio;
+    const height = viewRatio < 1 ? size / viewRatio : size;
 
-            const camera = new THREE.OrthographicCamera(
-                width / -2, // left
-                width / 2, // right
-                height / 2, // top
-                height / -2, // bottom
-                100, // near
-                900 // far
-            );
+    const camera = new THREE.OrthographicCamera(
+        width / -2, // left
+        width / 2,  // right
+        height / 2, // top
+        height / -2, // bottom
+        100,        // near
+        900         // far
+    );
 
-            camera.up.set(0, 0, 1);
-            camera.position.set(300, -300, 300);
-            camera.lookAt(0, 0, 0);
+    camera.up.set(0, 0, 1);
+    camera.position.set(300, -300, 300);
+    camera.lookAt(0, 0, 0);
 
-            return camera;
-        }
+    return camera;
+}
 
         function Texture(width, height, rects) {
             const canvas = document.createElement("canvas");
