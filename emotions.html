@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Emotion Face-Off 🌟</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a0033, #00b7ff);
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+
+        #game-container {
+            text-align: center;
+            padding: 3vw;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        h1 {
+            color: #00ffcc;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff00ff;
+            margin: 1vh 0;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff00ff; }
+            50% { text-shadow: 0 0 25px #00ffcc, 0 0 50px #ff00ff; }
+        }
+
+        #score {
+            color: #ffcc00;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            text-shadow: 0 0 10px #ffcc00;
+            margin: 2vh 0;
+            background: rgba(255, 204, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 2px solid #ffcc00;
+        }
+
+        #prompt {
+            color: #fff;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            text-shadow: 0 0 10px #00ffcc;
+            margin: 2vh 0;
+            background: rgba(0, 255, 204, 0.2);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 2px dashed #ff00ff;
+        }
+
+        #card-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 2vh;
+        }
+
+        .card {
+            width: 250px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 0 30px #00ffcc, 0 0 50px #ff00ff;
+            border-color: #00ffcc;
+        }
+
+        .card img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .correct {
+            animation: bounce 0.5s ease;
+            border-color: #00ffcc;
+            box-shadow: 0 0 30px #00ffcc;
+        }
+
+        .wrong {
+            animation: shake 0.5s ease;
+            border-color: #ff0000;
+            box-shadow: 0 0 30px #ff0000;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffcc);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px #ff00ff;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .home-link:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px #00ffcc;
+        }
+
+        @media (max-width: 600px) {
+            #card-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .card {
+                width: 80vw;
+                max-width: 300px;
+            }
+
+            .home-link {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <a href="index.html" class="home-link">🏠 Home</a>
+        <h1>🌟 Emotion Face-Off 🌟</h1>
+        <div id="score">Score: 0</div>
+        <div id="prompt">Get ready...</div>
+        <div id="card-container">
+            <div class="card" id="left-card" onclick="checkAnswer('left')">
+                <img src="https://via.placeholder.com/150" alt="Left Emotion">
+            </div>
+            <div class="card" id="right-card" onclick="checkAnswer('right')">
+                <img src="https://via.placeholder.com/150" alt="Right Emotion">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const emotions = ["Happy", "Sad"];
+        let score = 0;
+        let roundsPlayed = 0;
+        let correctEmotion = null;
+        let correctSide = null;
+        const maxRounds = 10;
+
+        // Update score display
+        function updateScore() {
+            document.getElementById("score").textContent = `Score: ${score}`;
+        }
+
+        // Function to fetch random images from emotion folders
+        async function fetchEmotionImages(emotion1, emotion2) {
+            try {
+                // Fetch images.json for both emotions
+                const response1 = await fetch(`/assets/${emotion1.toLowerCase()}/images.json`);
+                const response2 = await fetch(`/assets/${emotion2.toLowerCase()}/images.json`);
+                
+                if (!response1.ok || !response2.ok) {
+                    throw new Error('Failed to fetch image lists');
+                }
+
+                const images1 = await response1.json();
+                const images2 = await response2.json();
+
+                // Get random image from each emotion's folder
+                const randomImage1 = images1[Math.floor(Math.random() * images1.length)];
+                const randomImage2 = images2[Math.floor(Math.random() * images2.length)];
+
+                return {
+                    left: `/assets/${emotion1.toLowerCase()}/${randomImage1}`,
+                    right: `/assets/${emotion2.toLowerCase()}/${randomImage2}`
+                };
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                // Fallback to placeholder images if fetch fails
+                return {
+                    left: `https://via.placeholder.com/150?text=${emotion1}`,
+                    right: `https://via.placeholder.com/150?text=${emotion2}`
+                };
+            }
+        }
+
+        // Start a new round
+        async function nextRound() {
+            if (roundsPlayed >= maxRounds) {
+                document.getElementById("prompt").textContent = `Game Over! Final Score: ${score}`;
+                setTimeout(() => {
+                    score = 0;
+                    roundsPlayed = 0;
+                    updateScore();
+                    nextRound();
+                }, 2000);
+                return;
+            }
+
+            // Pick two different emotions
+            const emotion1 = emotions[Math.floor(Math.random() * emotions.length)];
+            let emotion2 = emotions[Math.floor(Math.random() * emotions.length)];
+            while (emotion2 === emotion1) {
+                emotion2 = emotions[Math.floor(Math.random() * emotions.length)];
+            }
+
+            // Randomly decide which side is correct
+            correctSide = Math.random() < 0.5 ? "left" : "right";
+            correctEmotion = correctSide === "left" ? emotion1 : emotion2;
+
+            // Update prompt
+            document.getElementById("prompt").textContent = `Show me... ${correctEmotion}!`;
+
+            // Show loading state
+            document.getElementById("left-card").querySelector("img").src = "https://via.placeholder.com/150?text=Loading...";
+            document.getElementById("right-card").querySelector("img").src = "https://via.placeholder.com/150?text=Loading...";
+
+            // Fetch and set images
+            const images = await fetchEmotionImages(emotion1, emotion2);
+            document.getElementById("left-card").querySelector("img").src = images.left;
+            document.getElementById("right-card").querySelector("img").src = images.right;
+
+            // Reset card styles
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                card.classList.remove("correct", "wrong");
+                card.style.borderColor = "#333";
+            });
+
+            roundsPlayed++;
+        }
+
+        // Check player's answer
+        function checkAnswer(side) {
+            const selectedCard = document.getElementById(`${side}-card`);
+            const otherCard = document.getElementById(side === "left" ? "right-card" : "left-card");
+
+            if (side === correctSide) {
+                score += 10;
+                selectedCard.classList.add("correct");
+            } else {
+                score -= 5;
+                selectedCard.classList.add("wrong");
+            }
+            updateScore();
+
+            // Disable clicks during animation, then proceed
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => card.onclick = null);
+
+            setTimeout(() => {
+                nextRound();
+                cards.forEach(card => card.onclick = () => checkAnswer(card.id.split("-")[0]));
+            }, 700); // Wait for animation to finish
+        }
+
+        // Start the game
+        nextRound();
+    </script>
+</body>
+</html>

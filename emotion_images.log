@@ -1,0 +1,32 @@
+2025-03-06 20:10:06,730 - INFO - Starting emotion images fetch process
+2025-03-06 20:10:06,730 - INFO - Created directory: assets/happy
+2025-03-06 20:10:06,730 - INFO - Created directory: assets/sad
+2025-03-06 20:10:06,730 - INFO - Processing emotion: happy
+2025-03-06 20:10:06,730 - INFO - Fetching images for query: happy face
+2025-03-06 20:10:07,463 - INFO - Downloaded: happy_20250306_201007_BDpLTEvPKVw.jpg
+2025-03-06 20:10:09,298 - INFO - Downloaded: happy_20250306_201008_LGgydInbGlU.jpg
+2025-03-06 20:10:10,302 - INFO - Fetching images for query: happy person
+2025-03-06 20:10:11,539 - INFO - Downloaded: happy_20250306_201011_oDagy4v4z9E.jpg
+2025-03-06 20:10:13,124 - INFO - Downloaded: happy_20250306_201012_xSaHpQN-NZQ.jpg
+2025-03-06 20:10:14,137 - INFO - Fetching images for query: happy child
+2025-03-06 20:10:14,861 - INFO - Downloaded: happy_20250306_201014_yvWdikF2MyE.jpg
+2025-03-06 20:10:16,300 - INFO - Downloaded: happy_20250306_201016_mx-ukEhDpHo.jpg
+2025-03-06 20:10:17,307 - INFO - Fetching images for query: happy expression
+2025-03-06 20:10:17,794 - INFO - Downloaded: happy_20250306_201017_uH1EgiuWtY8.jpg
+2025-03-06 20:10:19,200 - INFO - Downloaded: happy_20250306_201019_JDqK1K2Iu28.jpg
+2025-03-06 20:10:20,201 - INFO - Updated assets/happy/images.json with 8 new images
+2025-03-06 20:10:20,203 - INFO - Processing emotion: sad
+2025-03-06 20:10:20,205 - INFO - Fetching images for query: sad face
+2025-03-06 20:10:20,842 - INFO - Downloaded: sad_20250306_201020_0FjPiX4szEk.jpg
+2025-03-06 20:10:22,388 - INFO - Downloaded: sad_20250306_201022_2Kb1IJHdu6I.jpg
+2025-03-06 20:10:23,390 - INFO - Fetching images for query: sad person
+2025-03-06 20:10:25,374 - INFO - Downloaded: sad_20250306_201024_emlKHDEydhg.jpg
+2025-03-06 20:10:27,331 - INFO - Downloaded: sad_20250306_201026_Km4xZlLpREY.jpg
+2025-03-06 20:10:28,336 - INFO - Fetching images for query: sad expression
+2025-03-06 20:10:28,943 - INFO - Downloaded: sad_20250306_201028_-kqC3rZEMBI.jpg
+2025-03-06 20:10:30,744 - INFO - Downloaded: sad_20250306_201030_MfcR-a4j6tg.jpg
+2025-03-06 20:10:31,745 - INFO - Fetching images for query: sad child
+2025-03-06 20:10:32,340 - INFO - Downloaded: sad_20250306_201032_ZiR_hfn5i40.jpg
+2025-03-06 20:10:33,930 - INFO - Downloaded: sad_20250306_201033_Y4agZ-B7Jco.jpg
+2025-03-06 20:10:34,938 - INFO - Updated assets/sad/images.json with 8 new images
+2025-03-06 20:10:34,940 - INFO - Completed emotion images fetch process
