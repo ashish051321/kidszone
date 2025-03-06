@@ -198,8 +198,8 @@
         async function fetchEmotionImages(emotion1, emotion2) {
             try {
                 // Fetch images.json for both emotions
-                const response1 = await fetch(`/assets/${emotion1.toLowerCase()}/images.json`);
-                const response2 = await fetch(`/assets/${emotion2.toLowerCase()}/images.json`);
+                const response1 = await fetch(`kidszone/assets/${emotion1.toLowerCase()}/images.json`);
+                const response2 = await fetch(`kidszone/assets/${emotion2.toLowerCase()}/images.json`);
                 
                 if (!response1.ok || !response2.ok) {
                     throw new Error('Failed to fetch image lists');
