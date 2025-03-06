@@ -213,8 +213,8 @@
                 const randomImage2 = images2[Math.floor(Math.random() * images2.length)];
 
                 return {
-                    left: `/assets/${emotion1.toLowerCase()}/${randomImage1}`,
-                    right: `/assets/${emotion2.toLowerCase()}/${randomImage2}`
+                    left: `assets/${emotion1.toLowerCase()}/${randomImage1}`,
+                    right: `assets/${emotion2.toLowerCase()}/${randomImage2}`
                 };
             } catch (error) {
                 console.error('Error fetching images:', error);
