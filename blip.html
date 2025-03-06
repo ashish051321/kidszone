@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Math Nebula 🌟</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a0033, #00b7ff);
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #game-container {
+            text-align: center;
+            padding: 3vw;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        h1 {
+            color: #00ffcc;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff00ff;
+            margin: 1vh 0;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff00ff; }
+            50% { text-shadow: 0 0 25px #00ffcc, 0 0 50px #ff00ff; }
+        }
+
+        #instructions {
+            color: #fff;
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            text-shadow: 0 0 10px #00ffcc;
+            margin: 1vh 0;
+            background: rgba(0, 255, 204, 0.2);
+            padding: clamp(10px, 2vw, 15px);
+            border-radius: 15px;
+            border: 2px dashed #ff00ff;
+        }
+
+        #game-area {
+            position: relative;
+            width: 100%;
+            height: clamp(250px, 60vh, 500px);
+            background: rgba(0, 255, 204, 0.1);
+            border: 2px dashed #ff00ff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .star {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .star:hover,
+        .star:active {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        #blip {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(80px, 18vw, 150px);
+            transition: all 0.3s;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        #blip.bounce {
+            animation: blip-bounce 0.5s;
+        }
+
+        #blip.monster {
+            transform: translateX(-50%) scale(1.2);
+        }
+
+        #blip.jump {
+            animation: alien-jump 0.5s;
+        }
+
+        @keyframes alien-jump {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            25% { transform: translateX(-50%) translateY(-30px) rotate(5deg); }
+            50% { transform: translateX(-50%) translateY(-50px) rotate(-5deg); }
+            75% { transform: translateX(-50%) translateY(-30px) rotate(5deg); }
+        }
+
+        @keyframes blip-bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        #score-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(10px, 2vw, 20px);
+            margin: 1vh 0;
+        }
+
+        #score {
+            color: #ffcc00;
+            font-size: clamp(1rem, 3.5vw, 2.2rem);
+            text-shadow: 0 0 10px #ffcc00;
+            background: rgba(255, 204, 0, 0.2);
+            padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px);
+            border-radius: 15px;
+            border: 2px solid #ffcc00;
+        }
+
+        #level {
+            color: #ff00ff;
+            font-size: clamp(0.9rem, 3vw, 1.8rem);
+            text-shadow: 0 0 10px #ff00ff;
+            background: rgba(255, 0, 255, 0.2);
+            padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px);
+            border-radius: 15px;
+            border: 2px solid #ff00ff;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff00ff, #00ffcc);
+            color: #fff;
+            border: none;
+            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
+            border-radius: 50px;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover,
+        button:active {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px #00ffcc;
+        }
+
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.5rem, 6vw, 4rem);
+            pointer-events: none;
+            animation: popIn 0.5s forwards;
+            z-index: 100;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            #game-container {
+                padding: 2vw;
+            }
+
+            #game-area {
+                height: clamp(200px, 50vh, 400px);
+            }
+
+            #blip {
+                width: clamp(60px, 15vw, 100px);
+            }
+
+            .star {
+                width: clamp(40px, 10vw, 60px) !important;
+                height: clamp(40px, 10vw, 60px) !important;
+            }
+
+            #score-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <h1>🌟 Math Nebula 🌟</h1>
+        <div id="instructions">Find the stars with number <span id="target-number"></span>!</div>
+        <div id="game-area">
+            <svg id="blip" viewBox="0 0 100 100">
+                <!-- Normal Alien -->
+                <g id="normal-alien">
+                    <ellipse cx="50" cy="60" rx="40" ry="30" fill="#ff00ff" stroke="#00ffcc" stroke-width="3"/>
+                    <circle cx="50" cy="30" r="15" fill="#fff"/> <!-- Single eye -->
+                    <circle cx="50" cy="30" r="5" fill="#000"/> <!-- Pupil -->
+                    <path d="M30 70 Q50 90 70 70" fill="none" stroke="#ffcc00" stroke-width="3"/> <!-- Mouth -->
+                    <path d="M20 50 Q10 70 30 80" fill="none" stroke="#00ffcc" stroke-width="3"/> <!-- Tentacle 1 -->
+                    <path d="M80 50 Q90 70 70 80" fill="none" stroke="#00ffcc" stroke-width="3"/> <!-- Tentacle 2 -->
+                </g>
+                <!-- Monster Alien (hidden by default) -->
+                <g id="monster-alien" style="display: none;">
+                    <ellipse cx="50" cy="60" rx="40" ry="30" fill="#ff0000" stroke="#00ffcc" stroke-width="3"/>
+                    <circle cx="50" cy="30" r="15" fill="#fff"/>
+                    <circle cx="50" cy="30" r="5" fill="#000"/>
+                    <path d="M30 70 L40 80 L50 70 L60 80 L70 70" fill="#fff" stroke="#ffcc00" stroke-width="2"/> <!-- Teeth -->
+                    <path d="M20 50 Q10 70 30 80" fill="none" stroke="#00ffcc" stroke-width="3"/>
+                    <path d="M80 50 Q90 70 70 80" fill="none" stroke="#00ffcc" stroke-width="3"/>
+                </g>
+            </svg>
+        </div>
+        <div id="score-container">
+            <div id="score">✨ Stars: 0</div>
+            <div id="level">🌙 Level: 1</div>
+        </div>
+        <button onclick="startGame()">New Game</button>
+    </div>
+
+    <script>
+        const gameArea = document.getElementById('game-area');
+        const instructions = document.getElementById('instructions');
+        const targetNumberSpan = document.getElementById('target-number');
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('level');
+        const blip = document.getElementById('blip');
+        const normalAlien = document.getElementById('normal-alien');
+        const monsterAlien = document.getElementById('monster-alien');
+        let score = 0;
+        let level = 1;
+        let targetNumber;
+        let starsPerLevel = 5;
+        let animationFrame;
+
+        function createStar(number) {
+            const star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            star.setAttribute("viewBox", "0 0 100 100");
+            star.classList.add("star");
+            const size = clamp(60, window.innerWidth * 0.15, 100);
+            star.style.width = size + "px";
+            star.style.height = size + "px";
+            star.style.left = Math.random() * (gameArea.offsetWidth - size) + "px";
+            star.style.top = Math.random() * (gameArea.offsetHeight - size - 50) + "px";
+
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", "50");
+            circle.setAttribute("cy", "50");
+            circle.setAttribute("r", "45");
+            circle.setAttribute("fill", "#ffcc00");
+            circle.setAttribute("stroke", "#00ffcc");
+            circle.setAttribute("stroke-width", "3");
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", "50");
+            text.setAttribute("y", "60");
+            text.setAttribute("font-size", "45");
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("fill", "#fff");
+            text.textContent = number;
+
+            star.appendChild(circle);
+            star.appendChild(text);
+            star.dataset.number = number;
+
+            star.speedX = (Math.random() - 0.5) * 2;
+            star.speedY = (Math.random() - 0.5) * 2;
+            star.addEventListener('click', (e) => checkStar(star, e));
+            star.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                checkStar(star, e);
+            });
+            gameArea.appendChild(star);
+            return star;
+        }
+
+        function moveStars() {
+            const stars = document.getElementsByClassName('star');
+            const areaWidth = gameArea.offsetWidth;
+            const areaHeight = gameArea.offsetHeight;
+
+            for (let star of stars) {
+                const size = parseFloat(star.style.width);
+                let x = parseFloat(star.style.left);
+                let y = parseFloat(star.style.top);
+
+                x += star.speedX;
+                y += star.speedY;
+
+                if (x < 0 || x > areaWidth - size) star.speedX *= -1;
+                if (y < 0 || y > areaHeight - size - 50) star.speedY *= -1;
+
+                star.style.left = clamp(0, x, areaWidth - size) + "px";
+                star.style.top = clamp(0, y, areaHeight - size - 50) + "px";
+            }
+            animationFrame = requestAnimationFrame(moveStars);
+        }
+
+        function showFeedback(text, color) {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.textContent = text;
+            feedback.style.color = color;
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 1000);
+        }
+
+        function checkStar(star, event) {
+            const number = parseInt(star.dataset.number);
+            if (number === targetNumber) {
+                star.remove();
+                score += 1;
+                scoreDisplay.textContent = `✨ Stars: ${score}`;
+                blip.classList.add('bounce');
+                showFeedback('🌟 Correct!', '#00ffcc');
+                playSound('correct');
+                setTimeout(() => blip.classList.remove('bounce'), 500);
+
+                if (gameArea.getElementsByClassName('star').length === 0) {
+                    // Start confetti shower
+                    const duration = 3000;
+                    const animationEnd = Date.now() + duration;
+                    const defaults = { 
+                        startVelocity: 30, 
+                        spread: 360, 
+                        ticks: 60, 
+                        zIndex: 0,
+                        scalar: 2, // Makes confetti larger
+                        shapes: ['star', 'circle'], // Adds star shapes
+                        colors: ['#ff00ff', '#00ffcc', '#ffcc00', '#ff0000', '#ffffff'] // More colorful
+                    };
+
+                    function randomInRange(min, max) {
+                        return Math.random() * (max - min) + min;
+                    }
+
+                    const interval = setInterval(function() {
+                        const timeLeft = animationEnd - Date.now();
+
+                        if (timeLeft <= 0) {
+                            return clearInterval(interval);
+                        }
+
+                        const particleCount = 50 * (timeLeft / duration);
+                        confetti({
+                            ...defaults,
+                            particleCount,
+                            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                        });
+                        confetti({
+                            ...defaults,
+                            particleCount,
+                            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                        });
+                    }, 250);
+
+                    // Play celebration sound
+                    playSound('celebration');
+
+                    // Delay starting new game
+                    setTimeout(() => {
+                        if (score % 5 === 0) {
+                            level++;
+                            starsPerLevel = Math.min(starsPerLevel + 1, 10);
+                            levelDisplay.textContent = `🌙 Level: ${level}`;
+                            showFeedback('🎉 Level Up!', '#ff00ff');
+                            playSound('levelup');
+                        }
+                        startGame();
+                    }, 4000); // 4 second delay
+                } else {
+                    updateTargetNumber();
+                }
+            } else {
+                // Monster transformation
+                normalAlien.style.display = 'none';
+                monsterAlien.style.display = 'block';
+                blip.classList.add('monster');
+                
+                // Move toward cursor
+                const rect = blip.getBoundingClientRect();
+                const x = event.clientX - rect.left - rect.width / 2;
+                blip.style.transform = `translateX(-50%) translate(${x / 2}px, -20px) scale(1.2)`;
+                
+                showFeedback('❌ Grrr!', '#ff0000');
+                playSound('wrong');
+                setTimeout(() => {
+                    normalAlien.style.display = 'block';
+                    monsterAlien.style.display = 'none';
+                    blip.classList.remove('monster');
+                    blip.style.transform = 'translateX(-50%)';
+                }, 500);
+            }
+        }
+
+        function updateTargetNumber() {
+            const stars = Array.from(document.getElementsByClassName('star'));
+            if (stars.length > 0) {
+                const numbers = stars.map(star => parseInt(star.dataset.number));
+                targetNumber = numbers[Math.floor(Math.random() * numbers.length)];
+                targetNumberSpan.textContent = targetNumber;
+            }
+        }
+
+        function startGame() {
+            cancelAnimationFrame(animationFrame);
+            gameArea.querySelectorAll('.star').forEach(star => star.remove());
+            const numbers = Array(starsPerLevel).fill().map(() => Math.floor(Math.random() * 5) + 1);
+            numbers.forEach(num => createStar(num));
+            updateTargetNumber();
+            moveStars();
+        }
+
+        const sounds = {
+            correct: new Audio('https://assets.mixkit.co/active_storage/sfx/1434/1434-preview.mp3'),
+            wrong: new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'),
+            levelup: new Audio('https://assets.mixkit.co/active_storage/sfx/1434/1434-preview.mp3'),
+            background: new Audio('https://assets.mixkit.co/active_storage/sfx/2995/2995-preview.mp3'),
+            celebration: new Audio('https://assets.mixkit.co/active_storage/sfx/2014/2014-preview.mp3'),
+            alien: [
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'),
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2014/2014-preview.mp3'),
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3'),
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3'),
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3')
+            ]
+        };
+
+        function playSound(soundName) {
+            if (sounds[soundName]) {
+                sounds[soundName].currentTime = 0;
+                sounds[soundName].play();
+            }
+        }
+
+        function playRandomAlienSound() {
+            const randomSound = sounds.alien[Math.floor(Math.random() * sounds.alien.length)];
+            randomSound.currentTime = 0;
+            randomSound.play();
+        }
+
+        function makeAlienJump() {
+            blip.classList.add('jump');
+            playRandomAlienSound();
+            setTimeout(() => blip.classList.remove('jump'), 500);
+        }
+
+        // Add click event to alien
+        blip.addEventListener('click', makeAlienJump);
+        blip.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            makeAlienJump();
+        });
+
+        function clamp(min, val, max) {
+            return Math.min(Math.max(min, val), max);
+        }
+
+        sounds.background.loop = true;
+        sounds.background.volume = 0.4;
+        sounds.background.play();
+
+        startGame();
+
+        window.addEventListener('resize', () => {
+            const stars = document.getElementsByClassName('star');
+            for (let star of stars) {
+                const size = parseFloat(star.style.width);
+                star.style.left = clamp(0, parseFloat(star.style.left), gameArea.offsetWidth - size) + "px";
+                star.style.top = clamp(0, parseFloat(star.style.top), gameArea.offsetHeight - size - 50) + "px";
+            }
+        });
+    </script>
+</body>
+</html>

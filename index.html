@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Kids Galaxy Fun Zone 🌌</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a0033, #00b7ff);
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 5vw;
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+        }
+
+        h1 {
+            color: #00ffcc;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff00ff;
+            animation: pulse 1.5s infinite;
+            letter-spacing: 0.2vw;
+            margin: 2vh 0;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(220px, 45vw), 1fr));
+            gap: clamp(15px, 3vw, 25px);
+            padding: clamp(15px, 4vw, 30px);
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 20px;
+            padding: clamp(15px, 3vw, 25px);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-card:hover,
+        .game-card:active {
+            transform: translateY(-15px) rotateX(10deg) scale(1.05);
+            box-shadow: 0 0 30px #00ffcc, 0 0 50px #ff00ff;
+            border-color: #00ffcc;
+        }
+
+        .game-card svg {
+            width: clamp(60px, 15vw, 100px); /* Smaller, cute size */
+            height: clamp(60px, 15vw, 100px);
+            margin: 10px 0;
+        }
+
+        .game-card h2 {
+            color: #ffcc00;
+            margin: 1vw 0;
+            font-size: clamp(1.2rem, 4vw, 1.7rem);
+            text-shadow: 0 0 10px #ffcc00;
+        }
+
+        .game-card p {
+            color: #fff;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            margin: 0;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            animation: float 5s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px #00ffcc);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-30px) rotate(15deg) scale(1.1); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome-message {
+            background: rgba(0, 255, 204, 0.2);
+            padding: clamp(15px, 3vw, 25px);
+            border-radius: 20px;
+            margin: clamp(15px, 3vw, 30px);
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+            color: #fff;
+            text-shadow: 0 0 10px #00ffcc;
+            border: 2px dashed #ff00ff;
+            animation: glow 2s infinite;
+        }
+
+        .sound-toggle {
+            position: fixed;
+            bottom: clamp(15px, 3vw, 30px);
+            right: clamp(15px, 3vw, 30px);
+            background: linear-gradient(45deg, #ff00ff, #00ffcc);
+            color: #fff;
+            border: none;
+            padding: clamp(10px, 2vw, 15px) clamp(15px, 3vw, 25px);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            box-shadow: 0 0 15px #ff00ff;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .sound-toggle:hover,
+        .sound-toggle:active {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px #00ffcc;
+        }
+
+        @keyframes glow {
+            0%, 100% { border-color: #ff00ff; }
+            50% { border-color: #00ffcc; }
+        }
+
+        @media (max-width: 600px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 7vw, 3rem);
+            }
+
+            .welcome-message {
+                margin: 15px;
+            }
+
+            .floating-element {
+                font-size: clamp(15px, 5vw, 25px);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .sound-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .game-card h2 {
+                font-size: 1.1rem;
+            }
+
+            .game-card p {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="floating-elements" id="floatingElements"></div>
+    
+    <div class="container">
+        <h1>🚀 Kids Galaxy Fun Zone 🌌</h1>
+        
+        <div class="welcome-message">
+            Blast off to a universe of fun and learning! 
+            Tap a game to zoom into your cosmic adventure! 🌠🎉
+        </div>
+
+        <div class="game-grid">
+            <!-- Math Nebula Card -->
+            <div class="game-card" onclick="playSound('click'); window.location.href='games/math.html'">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="#ffcc00" stroke="#00ffcc" stroke-width="3"/>
+                    <text x="50" y="55" font-size="30" text-anchor="middle" fill="#fff" font-family="Orbitron">1+1</text>
+                    <circle cx="30" cy="20" r="10" fill="#ff00ff" style="animation: bounce 1.5s infinite;"/>
+                    <circle cx="70" cy="20" r="10" fill="#00ffcc" style="animation: bounce 1.5s infinite 0.5s;"/>
+                </svg>
+                <h2>Math Nebula</h2>
+                <p>Count stars and solve cosmic equations! 🌟</p>
+            </div>
+
+            <!-- Alphabet Orbit Card -->
+            <div class="game-card" onclick="playSound('click'); window.location.href='games/abc.html'">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="#00ffcc" stroke="#ff00ff" stroke-width="3"/>
+                    <text x="50" y="55" font-size="35" text-anchor="middle" fill="#fff" font-family="Orbitron">A</text>
+                    <path d="M 30 70 A 40 40 0 0 1 70 70" fill="none" stroke="#ffcc00" stroke-width="5" style="animation: spin 3s infinite linear;"/>
+                    <circle cx="20" cy="20" r="8" fill="#ff00ff" style="animation: twinkle 1s infinite;"/>
+                </svg>
+                <h2>Alphabet Orbit</h2>
+                <p>Spell words across the galaxy! 🪐</p>
+            </div>
+
+            <!-- Color Cosmos Card -->
+            <div class="game-card" onclick="playSound('click'); window.location.href='games/colors.html'">
+                <svg viewBox="0 0 100 100">
+                    <rect x="30" y="30" width="40" height="40" fill="#ff00ff" rx="10" style="animation: bounce 2s infinite;"/>
+                    <circle cx="50" cy="50" r="20" fill="#00ffcc" style="animation: bounce 2s infinite 0.3s;"/>
+                    <polygon points="40,20 60,20 50,40" fill="#ffcc00" style="animation: spin 2s infinite linear;"/>
+                </svg>
+                <h2>Color Cosmos</h2>
+                <p>Paint the universe with shapes! 🌈</p>
+            </div>
+
+            <!-- Puzzle Planets Card -->
+            <div class="game-card" onclick="playSound('click'); window.location.href='games/puzzle.html'">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="35" fill="#ffcc00" stroke="#00ffcc" stroke-width="3"/>
+                    <path d="M 40 40 L 60 40 L 60 60 L 40 60 Z" fill="#ff00ff" style="animation: bounce 1.8s infinite;"/>
+                    <circle cx="70" cy="20" r="10" fill="#00ffcc" style="animation: twinkle 1.5s infinite;"/>
+                    <circle cx="30" cy="80" r="8" fill="#fff" style="animation: twinkle 1.5s infinite 0.5s;"/>
+                </svg>
+                <h2>Puzzle Planets</h2>
+                <p>Piece together starry challenges! ✨</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="sound-toggle" onclick="toggleSound()">🔊 Cosmic Beats</button>
+
+    <script>
+        const sounds = {
+            click: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'),
+            background: new Audio('https://assets.mixkit.co/active_storage/sfx/2995/2995-preview.mp3')
+        };
+
+        let soundEnabled = true;
+
+        function playSound(soundName) {
+            if (soundEnabled && sounds[soundName]) {
+                sounds[soundName].currentTime = 0;
+                sounds[soundName].play();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                sounds.background.play();
+            } else {
+                sounds.background.pause();
+            }
+        }
+
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const emojis = ['🚀', '🌌', '🪐', '🌠', '👽', '🌟', '🛸', '✨'];
+            const numElements = window.innerWidth < 600 ? 10 : 20;
+            for (let i = 0; i < numElements; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.fontSize = clamp(15, Math.random() * 25 + 25, 50) + 'px';
+                element.style.animationDelay = Math.random() * 4 + 's';
+                element.style.opacity = 0.8;
+                container.appendChild(element);
+            }
+        }
+
+        function clamp(min, val, max) {
+            return Math.min(Math.max(min, val), max);
+        }
+
+        createFloatingElements();
+        sounds.background.loop = true;
+        sounds.background.volume = 0.4;
+        if (soundEnabled) {
+            sounds.background.play();
+        }
+
+        window.addEventListener('resize', () => {
+            document.getElementById('floatingElements').innerHTML = '';
+            createFloatingElements();
+        });
+    </script>
+</body>
+</html>
