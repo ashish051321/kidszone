@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Call Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .call-screen, .video-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #075e54;
+      text-align: center;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .call-screen h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .call-status {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .answer-btn {
+      background-color: #25d366;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .answer-btn:hover {
+      background-color: #1ebe59;
+    }
+
+    .video-screen {
+      background-color: #000;
+      position: relative;
+    }
+
+    video#santa-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #user-video {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 180px;
+      height: 120px;
+      border: 2px solid white;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="call-screen" id="callScreen">
+    <h1>Calling Santa...</h1>
+    <div class="call-status">Ringing 📞</div>
+    <button class="answer-btn" onclick="answerCall()">Answer</button>
+  </div>
+
+  <div class="video-screen" id="videoScreen" style="display: none;">
+    <video id="santa-video" autoplay loop muted>
+      <source src="santa.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <video id="user-video" autoplay muted playsinline></video>
+  </div>
+
+  <script>
+    function answerCall() {
+      document.getElementById('callScreen').style.display = 'none';
+      document.getElementById('videoScreen').style.display = 'flex';
+
+      // Start webcam
+      const userVideo = document.getElementById('user-video');
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          userVideo.srcObject = stream;
+        })
+        .catch(err => {
+          console.error("Error accessing webcam: ", err);
+          alert("Could not access webcam.");
+        });
+    }
+  </script>
+
+</body>
+</html>

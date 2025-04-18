@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santa Video Call</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1605812860427-3c1ca2f4f0c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .call-container {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      height: 80vh;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .santa-video, .user-video {
+      width: 100%;
+      height: 60%;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .user-video {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 200px;
+      height: 150px;
+      border: 2px solid #fff;
+    }
+
+    .call-status {
+      color: #fff;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    #answer-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    #hangup-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .santa-placeholder {
+      width: 100%;
+      height: 60%;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="call-container">
+    <div class="call-status" id="call-status">Incoming Call from Santa...</div>
+    <div class="santa-placeholder" id="santa-placeholder">
+      Upload Santa's Video (Replace with your video file)
+    </div>
+    <video id="santa-video" class="santa-video hidden" autoplay></video>
+    <video id="user-video" class="user-video hidden" autoplay muted></video>
+    <div class="button-container">
+      <button id="answer-btn">Pick Up Call</button>
+      <button id="hangup-btn" class="hidden">Hang Up</button>
+    </div>
+  </div>
+
+  <script>
+    const santaPlaceholder = document.getElementById('santa-placeholder');
+    const santaVideo = document.getElementById('santa-video');
+    const userVideo = document.getElementById('user-video');
+    const callStatus = document.getElementById('call-status');
+    const answerBtn = document.getElementById('answer-btn');
+    const hangupBtn = document.getElementById('hangup-btn');
+
+    // Placeholder for Santa's video (replace with your video file path)
+    const santaVideoSource = 'path/to/your/santa-video.mp4'; // Update this path
+
+    // Request access to user's camera
+    async function startUserVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        userVideo.srcObject = stream;
+        userVideo.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        callStatus.textContent = 'Camera access denied. Please allow camera access.';
+      }
+    }
+
+    // Start the call
+    function startCall() {
+      santaPlaceholder.classList.add('hidden');
+      santaVideo.src = santaVideoSource; // Set the video source
+      santaVideo.classList.remove('hidden');
+      callStatus.textContent = 'Talking with Santa!';
+      answerBtn.classList.add('hidden');
+      hangupBtn.classList.remove('hidden');
+      startUserVideo();
+    }
+
+    // End the call
+    function endCall() {
+      santaVideo.pause();
+      santaVideo.src = '';
+      santaVideo.classList.add('hidden');
+      santaPlaceholder.classList.remove('hidden');
+      userVideo.srcObject?.getTracks().forEach(track => track.stop());
+      userVideo.classList.add('hidden');
+      callStatus.textContent = 'Call Ended';
+      answerBtn.classList.remove('hidden');
+      hangupBtn.classList.add('hidden');
+    }
+
+    // Event listeners for buttons
+    answerBtn.addEventListener('click', startCall);
+    hangupBtn.addEventListener('click', endCall);
+  </script>
+</body>
+</html>
