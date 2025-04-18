@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call with Santa</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .santa-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px) brightness(0.7);
+            z-index: 1;
+        }
+
+        .caller-info {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 3;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .caller-info h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .caller-info p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        .call-controls {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 3;
+        }
+
+        .call-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s;
+        }
+
+        .answer-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .decline-btn {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .call-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .local-video {
+            position: absolute;
+            bottom: 20%;
+            right: 5%;
+            width: 150px;
+            height: 200px;
+            border-radius: 10px;
+            border: 3px solid white;
+            z-index: 2;
+            background-color: black;
+        }
+
+        .remote-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            display: none;
+        }
+
+        .call-ended {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 4;
+            display: none;
+        }
+
+        .call-ended h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .call-duration {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 3;
+            display: none;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 3;
+            display: none;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hidden audio elements */
+        .audio-element {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- Glassy Santa background -->
+        <img src="assets/santa-background.jpg" class="santa-background" id="santa-background">
+        
+        <!-- Santa video -->
+        <video class="remote-video" id="remote-video" autoplay></video>
+        
+        <!-- User camera feed -->
+        <video class="local-video" id="local-video" autoplay muted></video>
+        
+        <!-- Caller info -->
+        <div class="caller-info" id="caller-info">
+            <h1>Santa Claus</h1>
+            <p>North Pole • Calling...</p>
+        </div>
+        
+        <!-- Call duration -->
+        <div class="call-duration" id="call-duration">00:00</div>
+        
+        <!-- Call controls -->
+        <div class="call-controls" id="call-controls">
+            <button class="call-btn decline-btn" id="decline-btn">✕</button>
+            <button class="call-btn answer-btn" id="answer-btn">✓</button>
+        </div>
+        
+        <!-- Video controls -->
+        <div class="video-controls" id="video-controls">
+            <button class="control-btn" id="mute-btn">🔇</button>
+            <button class="control-btn" id="video-btn">📷</button>
+            <button class="control-btn decline-btn" id="end-call-btn">✕</button>
+        </div>
+        
+        <!-- Call ended screen -->
+        <div class="call-ended" id="call-ended">
+            <h2>Call Ended</h2>
+            <p>Duration: <span id="final-duration">00:00</span></p>
+            <button class="call-btn answer-btn" id="call-again-btn">Call Again</button>
+        </div>
+        
+        <!-- Audio elements -->
+        <audio id="ringtone" loop class="audio-element"></audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const santaBackground = document.getElementById('santa-background');
+            const remoteVideo = document.getElementById('remote-video');
+            const localVideo = document.getElementById('local-video');
+            const callerInfo = document.getElementById('caller-info');
+            const callDuration = document.getElementById('call-duration');
+            const finalDuration = document.getElementById('final-duration');
+            const callControls = document.getElementById('call-controls');
+            const videoControls = document.getElementById('video-controls');
+            const callEnded = document.getElementById('call-ended');
+            const ringtone = document.getElementById('ringtone');
+            
+            // Buttons
+            const answerBtn = document.getElementById('answer-btn');
+            const declineBtn = document.getElementById('decline-btn');
+            const endCallBtn = document.getElementById('end-call-btn');
+            const muteBtn = document.getElementById('mute-btn');
+            const videoBtn = document.getElementById('video-btn');
+            const callAgainBtn = document.getElementById('call-again-btn');
+            
+            // Call state
+            let callActive = false;
+            let callStartTime;
+            let durationInterval;
+            let localStream;
+            let isMuted = false;
+            let isVideoOff = false;
+
+            // New elements
+            const startOverlay = document.getElementById('start-overlay');
+            const startBtn = document.getElementById('start-btn');
+            
+            // Initialize call
+            initCall();
+            
+            // Event listeners
+            answerBtn.addEventListener('click', answerCall);
+            declineBtn.addEventListener('click', endCall);
+            endCallBtn.addEventListener('click', endCall);
+            callAgainBtn.addEventListener('click', initCall);
+            muteBtn.addEventListener('click', toggleMute);
+            videoBtn.addEventListener('click', toggleVideo);
+            
+            // Load ringtone
+            ringtone.src = 'assets/ringtone.mp3';
+            
+            // Functions
+            
+            
+             // Modified initialization
+             startBtn.addEventListener('click', function() {
+                startOverlay.style.display = 'none';
+                initCall();
+                
+                // This user interaction unlocks audio for the session
+                const unlockAudio = () => {
+                    const silentAudio = new Audio();
+                    silentAudio.src = 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...';
+                    silentAudio.play().then(() => {
+                        silentAudio.remove();
+                    });
+                };
+                unlockAudio();
+            });
+            
+            // Modified initCall function
+            function initCall() {
+                callActive = false;
+                callEnded.style.display = 'none';
+                callControls.style.display = 'flex';
+                videoControls.style.display = 'none';
+                callDuration.style.display = 'none';
+                
+                santaBackground.style.display = 'block';
+                remoteVideo.style.display = 'none';
+                remoteVideo.pause();
+                
+                localVideo.style.display = 'block';
+                callerInfo.style.display = 'block';
+                callerInfo.querySelector('p').textContent = 'Calling...';
+                
+                remoteVideo.src = 'assets/santa-video.mp4';
+                
+                // Start ringing with user interaction
+                ringtone.src = 'assets/ringtone.mp3';
+                ringtone.loop = true;
+                const playRingtone = () => {
+                    ringtone.play().catch(e => {
+                        console.log("Rington play failed, trying again after interaction");
+                        document.body.addEventListener('click', function tempListener() {
+                            document.body.removeEventListener('click', tempListener);
+                            playRingtone();
+                        });
+                    });
+                };
+                playRingtone();
+                
+                startCamera();
+            }
+            
+            // Modified answerCall function
+            function answerCall() {
+                callActive = true;
+                callControls.style.display = 'none';
+                videoControls.style.display = 'flex';
+                callDuration.style.display = 'block';
+                
+                ringtone.pause();
+                ringtone.currentTime = 0;
+                
+                santaBackground.style.display = 'none';
+                remoteVideo.style.display = 'block';
+                remoteVideo.muted = false;
+                
+                // Ensure video plays with sound
+                const playVideo = () => {
+                    remoteVideo.play().catch(e => {
+                        console.log("Video play failed, trying again after interaction");
+                        document.body.addEventListener('click', function tempListener() {
+                            document.body.removeEventListener('click', tempListener);
+                            playVideo();
+                        });
+                    });
+                };
+                playVideo();
+                
+                callerInfo.style.display = 'none';
+                callStartTime = new Date();
+                updateCallDuration();
+                durationInterval = setInterval(updateCallDuration, 1000);
+            }
+            
+            function endCall() {
+                callActive = false;
+                clearInterval(durationInterval);
+                
+                // Stop all sounds
+                ringtone.pause();
+                ringtone.currentTime = 0;
+                remoteVideo.pause();
+                
+                // Show call ended screen
+                callEnded.style.display = 'flex';
+                finalDuration.textContent = callDuration.textContent;
+                
+                // Reset UI elements
+                callControls.style.display = 'none';
+                videoControls.style.display = 'none';
+                callDuration.style.display = 'none';
+                remoteVideo.style.display = 'none';
+                santaBackground.style.display = 'block';
+                callerInfo.style.display = 'block';
+                callerInfo.querySelector('p').textContent = 'Call ended';
+                
+                // Keep local video active
+                localVideo.style.display = 'block';
+            }
+            
+            function updateCallDuration() {
+                if (!callStartTime) return;
+                
+                const now = new Date();
+                const diff = Math.floor((now - callStartTime) / 1000);
+                
+                const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+                const seconds = (diff % 60).toString().padStart(2, '0');
+                
+                callDuration.textContent = `${minutes}:${seconds}`;
+            }
+            
+            async function startCamera() {
+                try {
+                    // Stop existing stream if any
+                    if (localStream) {
+                        localStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Get new camera feed
+                    localStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: true, 
+                        audio: true 
+                    });
+                    localVideo.srcObject = localStream;
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    localVideo.style.display = 'none';
+                }
+            }
+            
+            function toggleMute() {
+                if (localStream) {
+                    isMuted = !isMuted;
+                    localStream.getAudioTracks()[0].enabled = !isMuted;
+                    muteBtn.textContent = isMuted ? '🔈' : '🔇';
+                }
+            }
+            
+            function toggleVideo() {
+                if (localStream) {
+                    isVideoOff = !isVideoOff;
+                    localStream.getVideoTracks()[0].enabled = !isVideoOff;
+                    videoBtn.textContent = isVideoOff ? '📷' : '📹';
+                    localVideo.style.display = isVideoOff ? 'none' : 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
