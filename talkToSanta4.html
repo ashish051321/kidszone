@@ -91,6 +91,11 @@
             color: white;
         }
 
+        .video-toggle-btn {
+            background-color: #36c1f4;
+            color: white;
+        }
+
         .call-btn:hover {
             transform: scale(1.1);
         }
@@ -215,7 +220,7 @@
         <!-- Video controls -->
         <div class="video-controls" id="video-controls">
             <!-- <button class="control-btn" id="mute-btn">🔇</button> -->
-            <!-- <button class="control-btn" id="video-btn">📷</button> -->
+            <button class="call-btn video-toggle-btn" id="video-btn">📷</button>
             <button class="call-btn decline-btn" id="end-call-btn">✕</button>
         </div>
         
@@ -224,7 +229,7 @@
             <h2>Call Ended</h2>
             <p>Duration: <span id="final-duration">00:00</span></p>
             <button class="call-btn answer-btn" id="call-again-btn"><small>Call Again</small></button>
-            <button class="call-btn answer-btn" id="call-again-btn"><small><a href="/kidszone">Home</a></small></button>
+            <button class="call-btn answer-btn" style="margin-top:10px;" id="call-again-btn"><small><a href="/kidszone">Home</a></small></button>
         </div>
         
         <!-- Audio elements -->
