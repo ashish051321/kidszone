@@ -193,6 +193,11 @@
 </head>
 <body>
     <div class="video-container">
+        <div id="start-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:100;">
+            <button id="start-btn" style="padding:15px 30px; font-size:20px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">
+                Start Santa Call
+            </button>
+        </div>
         <!-- Glassy Santa background -->
         <img src="assets/santa-background.jpg" class="santa-background" id="santa-background">
         
@@ -271,20 +276,28 @@
             const startBtn = document.getElementById('start-btn');
             
             // Initialize call
-            initCall();
+            // initCall();
             
             // Event listeners
             answerBtn.addEventListener('click', answerCall);
             declineBtn.addEventListener('click', endCall);
             endCallBtn.addEventListener('click', endCall);
             callAgainBtn.addEventListener('click', initCall);
-            muteBtn.addEventListener('click', toggleMute);
+            // muteBtn.addEventListener('click', toggleMute);
             videoBtn.addEventListener('click', toggleVideo);
             
             // Load ringtone
             ringtone.src = 'assets/ringtone.mp3';
             
             // Functions
+            const unlockAudio = () => {
+                    const silentAudio = new Audio();
+                    silentAudio.src = 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...';
+                    silentAudio.play().then(() => {
+                        silentAudio.remove();
+                    });
+                };
+                unlockAudio();
             
             
              // Modified initialization
@@ -319,7 +332,6 @@
                 callerInfo.style.display = 'block';
                 callerInfo.querySelector('p').textContent = 'Calling...';
                 
-                remoteVideo.src = 'assets/santa-video.mp4';
                 
                 // Start ringing with user interaction
                 ringtone.src = 'assets/ringtone.mp3';
@@ -340,6 +352,8 @@
             
             // Modified answerCall function
             function answerCall() {
+                remoteVideo.src = 'assets/santa-video.mp4';
+
                 callActive = true;
                 callControls.style.display = 'none';
                 videoControls.style.display = 'flex';
